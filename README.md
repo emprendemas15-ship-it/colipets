@@ -43,6 +43,14 @@ COLIPETS opens directly in local mode, and its data stays on that device unless 
 
 Use **Conteo físico** from either inventory section to reconcile products and raw materials. Enter only the items counted; blank fields are left unchanged. These stock-only adjustments are excluded from the monthly balance.
 
+## Validations and linked inventory
+
+- Sales, credits, and consignment deliveries require available finished-product stock for the movement date. Credits reduce stock; consigned units are reserved and leave inventory when paid, or become available again when returned.
+- Manufacturing requires an active product with a saved materials plan and enough raw materials for the selected date. Each confirmed production order records its material consumption once. Purchases for resale add resale inventory; purchases of raw materials add material inventory.
+- Product and material selectors use the catalogs and fill related details and prices. Purchases require a catalog code for inventory items; an empty code is an operating expense.
+- Movement dates are limited to the first open monthly period. Save that month's balance before registering movements in the following month. Payments, refunds, and consignment settlements cannot predate their original transaction.
+- Required fields, positive quantities, valid totals, stock availability, and original transaction references are checked before a record is accepted.
+
 If Supabase is unavailable, COLIPETS still opens in local mode. Local-only changes are not uploaded until you sign in. The PWA caches its app shell for offline access after the first successful visit. Export a COLIPETS backup before changing devices or accounts.
 
 The Excel workbook, `outputs/`, local Node modules, and spreadsheet-analysis scripts are intentionally excluded from GitHub by [`.gitignore`](./.gitignore).
