@@ -1,0 +1,56 @@
+name: Deploy COLIPETS to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Require Supabase public client settings
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          node -e "if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) { console.error('Add SUPABASE_URL and SUPABASE_ANON_KEY under repository Actions secrets.'); process.exit(1); }"
+          node -e "const fs=require('node:fs');const config={url:process.env.SUPABASE_URL,anonKey:process.env.SUPABASE_ANON_KEY};fs.writeFileSync('src/supabase-config.js','window.COLIPETS_SUPABASE_CONFIG = '+JSON.stringify(config)+';\n');"
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build static PWA
+        run: |
+          node --check src/cloud-sync.js
+          node --check src/app.js
+          node -e "const fs=require('node:fs');const m=JSON.parse(fs.readFileSync('manifest.webmanifest','utf8'));for(const icon of m.icons){if(!fs.existsSync(icon.src.replace(/^\\.\\//,'')))throw new Error('Missing PWA icon: '+icon.src)}"
+          mkdir _site
+          cp index.html manifest.webmanifest service-worker.js pagina-colipets.html _site/
+          cp -R src icons _site/
+          touch _site/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

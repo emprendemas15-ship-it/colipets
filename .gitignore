@@ -1,0 +1,18 @@
+# Business data and generated analysis
+*.xls
+*.xlsx
+*.xlsm
+/outputs/
+/*.mjs
+/*.ps1
+
+# Local tooling and generated files
+/node_modules/
+/_site/
+/dist/
+
+# Secrets and machine-specific Supabase configuration
+.env
+.env.*
+!.env.example
+/src/supabase-config.local.js
