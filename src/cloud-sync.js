@@ -8,7 +8,6 @@
     const authMessage = document.getElementById('colipetsAuthMessage');
     const syncStatus = document.getElementById('colipetsSyncStatus');
     const openAuthButton = document.getElementById('colipetsOpenAuth');
-    const syncButton = document.getElementById('colipetsSyncNow');
     const signOutButton = document.getElementById('colipetsSignOut');
     const ownerKey = '__colipets_cloud_owner';
     const backupPrefix = '__colipets_local_backup:';
@@ -40,7 +39,6 @@
         authPanel.hidden = true;
         document.getElementById('colipetsCloudControls').hidden = false;
         openAuthButton.hidden = !client;
-        syncButton.hidden = true;
         signOutButton.hidden = true;
         document.body.classList.remove('cloud-locked');
         setSyncStatus(message);
@@ -180,6 +178,8 @@
         }, 700);
     }
 
+    setInterval(scheduleSync, 60_000);
+
     async function syncNow() {
         if (!currentUserId) return;
         setSyncStatus('Sincronizando…');
@@ -254,7 +254,6 @@
         setSyncStatus(`Sincronizado · ${user.email || 'cuenta compartida'}`);
         document.getElementById('colipetsCloudControls').hidden = false;
         openAuthButton.hidden = true;
-        syncButton.hidden = false;
         signOutButton.hidden = false;
         authPanel.hidden = true;
         document.body.classList.remove('cloud-locked');
@@ -282,7 +281,7 @@
             .subscribe((status, error) => {
                 if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
                     console.error('No se pudo activar la sincronización en tiempo real de COLIPETS:', error);
-                    setSyncStatus('Sincronización automática no disponible; se puede guardar manualmente.', true);
+                    setSyncStatus('Actualización en tiempo real no disponible; se reintentará automáticamente.', true);
                 }
             });
     }
@@ -373,15 +372,6 @@
 
         document.getElementById('colipetsUseOffline').addEventListener('click', async () => {
             showLocalMode();
-        });
-
-        syncButton.addEventListener('click', () => {
-            syncQueue = syncQueue
-                .then(syncNow)
-                .catch(error => {
-                    console.error('Error al sincronizar manualmente los datos de COLIPETS:', error);
-                    setSyncStatus(`Error al sincronizar: ${error.message}`, true);
-                });
         });
 
         signOutButton.addEventListener('click', async () => {
