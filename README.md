@@ -2,6 +2,8 @@
 
 COLIPETS is a static progressive web app. It can be installed from a browser and uses Supabase email/password authentication to sync app data between devices. The Supabase client uses only the public anon key; row-level security keeps each account's data separate.
 
+Live app: https://emprendemas15-ship-it.github.io/colipets/
+
 The public GitHub repository contains application source, not business spreadsheets or generated reconciliation files. The deployment workflow copies only the files needed to run the PWA.
 
 ## Create and configure Supabase
@@ -9,7 +11,7 @@ The public GitHub repository contains application source, not business spreadshe
 1. Create a Supabase project in South America (São Paulo) and keep its database password private.
 2. In the Supabase SQL Editor, run [`supabase/migrations/20261109000000_colipets_shared_state.sql`](./supabase/migrations/20261109000000_colipets_shared_state.sql). It creates the per-account state table, row-level security policies, an atomic merge function, and realtime updates.
 3. In **Project Settings → API**, copy the Project URL and the public `anon`/publishable key. Never use or publish the `service_role` or secret key in this browser app.
-4. In **Authentication → URL Configuration**, set the Site URL to the GitHub Pages URL and add that URL to the redirect allow list. The URL is `https://OWNER.github.io/colipets/` for an account-owned Pages site.
+4. In **Authentication → URL Configuration**, set the Site URL and redirect allow list to `https://emprendemas15-ship-it.github.io/colipets/`.
 5. In **Authentication → Providers → Email**, configure email/password sign-in. Create the shared account once from the app; confirm the email if Supabase requests it.
 
 ## Publish on GitHub Pages
