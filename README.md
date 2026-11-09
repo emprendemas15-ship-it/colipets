@@ -12,9 +12,9 @@ The public GitHub repository contains application source, not business spreadshe
 2. In the Supabase SQL Editor, run [`supabase/migrations/20261109000000_colipets_shared_state.sql`](./supabase/migrations/20261109000000_colipets_shared_state.sql). It creates the per-account state table, row-level security policies, an atomic merge function, and realtime updates.
 3. In **Project Settings → API**, copy the Project URL and the public `anon`/publishable key. Never use or publish the `service_role` or secret key in this browser app.
 4. In **Authentication → URL Configuration**, set the Site URL and redirect allow list to `https://emprendemas15-ship-it.github.io/colipets/`.
-5. In **Authentication → Providers → Email**, configure email/password sign-in. Create the shared account once from the app; confirm the email if Supabase requests it.
+5. In **Authentication → Providers → Email**, enable email/password sign-in and turn off **Confirm email**. This lets the owner create the account without access to an email inbox; use a syntactically valid email such as `colipets@gmail.com` and keep the password private.
 6. Run [`supabase/migrations/20261109000001_lock_colipets_sync_to_single_account.sql`](./supabase/migrations/20261109000001_lock_colipets_sync_to_single_account.sql). It locks cloud sync until an owner is explicitly authorized.
-7. In the SQL Editor, authorize the account you just created by running the query below, replacing `EMAIL_DE_LA_CUENTA` with its email. Then disable **Allow new users to sign up** in the Supabase Auth settings. Do not share or put the account password in GitHub.
+7. Create the account from COLIPETS. Since **Confirm email** is off, it should sign in immediately without an email link. Then in the SQL Editor, authorize it by running the query below, replacing `EMAIL_DE_LA_CUENTA` with its email. Finally, disable **Allow new users to sign up** in the Supabase Auth settings. Do not share or put the account password in GitHub.
 
    ```sql
    insert into public.colipets_sync_owner (singleton, user_id)
@@ -24,7 +24,7 @@ The public GitHub repository contains application source, not business spreadshe
    on conflict (singleton) do update set user_id = excluded.user_id;
    ```
 
-   The query should insert exactly one row. If it inserts zero, confirm the account exists and its email is verified before trying again.
+   The query should insert exactly one row. If it inserts zero, make sure the account was created before running the query and that the email matches.
 
 ## Publish on GitHub Pages
 
