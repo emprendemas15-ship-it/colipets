@@ -41,6 +41,8 @@ The workflow writes the public client configuration only into the generated Page
 
 COLIPETS opens directly in local mode, and its data stays on that device unless you choose **Sincronizar entre dispositivos** and sign in. With an authorized session, changes sync automatically after edits and are retried every minute while the app is open; realtime updates bring in changes from other devices. Only the account explicitly authorized in `colipets_sync_owner` can use cloud sync; all other accounts are denied by row-level security. On the first sign-in, existing `taller_*` and `colipets_*` app data in that browser is merged into the account. Catalog entries merge by code and movements by ID; cloud values win if the same record differs. Use the same account on each device.
 
+Use **Conteo físico** from either inventory section to reconcile products and raw materials. Enter only the items counted; blank fields are left unchanged. These stock-only adjustments are excluded from the monthly balance.
+
 If Supabase is unavailable, COLIPETS still opens in local mode. Local-only changes are not uploaded until you sign in. The PWA caches its app shell for offline access after the first successful visit. Export a COLIPETS backup before changing devices or accounts.
 
 The Excel workbook, `outputs/`, local Node modules, and spreadsheet-analysis scripts are intentionally excluded from GitHub by [`.gitignore`](./.gitignore).
