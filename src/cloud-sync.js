@@ -7,6 +7,7 @@
     const authForm = document.getElementById('colipetsAuthForm');
     const authMessage = document.getElementById('colipetsAuthMessage');
     const syncStatus = document.getElementById('colipetsSyncStatus');
+    const openAuthButton = document.getElementById('colipetsOpenAuth');
     const syncButton = document.getElementById('colipetsSyncNow');
     const signOutButton = document.getElementById('colipetsSignOut');
     const ownerKey = '__colipets_cloud_owner';
@@ -32,6 +33,17 @@
         syncStatus.textContent = message;
         syncStatus.classList.toggle('text-rose-700', isError);
         syncStatus.classList.toggle('text-emerald-800', !isError);
+    }
+
+    function showLocalMode(message = 'Solo en este dispositivo') {
+        currentUserId = undefined;
+        authPanel.hidden = true;
+        document.getElementById('colipetsCloudControls').hidden = false;
+        openAuthButton.hidden = !client;
+        syncButton.hidden = true;
+        signOutButton.hidden = true;
+        document.body.classList.remove('cloud-locked');
+        setSyncStatus(message);
     }
 
     function collectLocalState() {
@@ -151,7 +163,7 @@
         if (document.readyState === 'complete') window.dispatchEvent(new Event('load'));
         appLoaded = true;
         authPanel.hidden = true;
-        document.getElementById('colipetsCloudControls').hidden = !currentUserId;
+        document.getElementById('colipetsCloudControls').hidden = false;
         document.body.classList.remove('cloud-locked');
     }
 
@@ -241,6 +253,9 @@
         watchForLocalChanges();
         setSyncStatus(`Sincronizado · ${user.email || 'cuenta compartida'}`);
         document.getElementById('colipetsCloudControls').hidden = false;
+        openAuthButton.hidden = true;
+        syncButton.hidden = false;
+        signOutButton.hidden = false;
         authPanel.hidden = true;
         document.body.classList.remove('cloud-locked');
         await loadApplication();
@@ -277,12 +292,17 @@
         if (activatingUserId === session.user.id) return activatingSession;
         activatingUserId = session.user.id;
         activatingSession = (async () => {
-            showAuthPanel('Conectando y sincronizando los datos protegidos de COLIPETS…');
+            const authPanelWasOpen = !authPanel.hidden;
+            setSyncStatus('Conectando y sincronizando…');
             try {
                 await prepareUserState(session.user);
             } catch (error) {
                 console.error('No se pudo preparar la cuenta de COLIPETS en Supabase:', error);
-                showAuthPanel(`No se pudo conectar: ${error.message}. Comprueba la migración de Supabase o usa el modo local.`);
+                if (authPanelWasOpen) {
+                    showAuthPanel(`No se pudo conectar: ${error.message}. Comprueba la configuración de Supabase.`);
+                } else {
+                    showLocalMode(`No se pudo sincronizar: ${error.message}. Tus datos siguen en este dispositivo.`);
+                }
             } finally {
                 activatingUserId = undefined;
                 activatingSession = undefined;
@@ -295,16 +315,15 @@
         const url = String(config.url || '').trim();
         const anonKey = String(config.anonKey || '').trim();
         if (!url || !anonKey || !window.supabase) {
-            document.body.classList.remove('cloud-locked');
-            authPanel.hidden = true;
-            loadApplication().catch(error => {
-                console.error('No se pudo iniciar COLIPETS:', error);
-                showAuthPanel(`No se pudo iniciar COLIPETS: ${error.message}`);
-            });
+            showLocalMode();
             return;
         }
 
         client = window.supabase.createClient(url, anonKey);
+        showLocalMode('Solo en este dispositivo · inicia sesión para sincronizar');
+        openAuthButton.addEventListener('click', () => {
+            showAuthPanel('Inicia sesión o crea una cuenta para sincronizar tus datos entre dispositivos.');
+        });
         authForm.addEventListener('submit', async event => {
             event.preventDefault();
             const email = authForm.elements.email.value.trim();
@@ -353,11 +372,7 @@
         });
 
         document.getElementById('colipetsUseOffline').addEventListener('click', async () => {
-            currentUserId = undefined;
-            authPanel.hidden = true;
-            document.getElementById('colipetsCloudControls').hidden = true;
-            document.body.classList.remove('cloud-locked');
-            await loadApplication();
+            showLocalMode();
         });
 
         syncButton.addEventListener('click', () => {
@@ -380,8 +395,7 @@
                 setSyncStatus(`No se pudo cerrar sesión: ${error.message}`, true);
                 return;
             }
-            currentUserId = undefined;
-            showAuthPanel('Sesión cerrada. Los datos locales quedan guardados en este dispositivo.');
+            showLocalMode('Sesión cerrada · los datos siguen en este dispositivo');
         });
 
         client.auth.onAuthStateChange((event, session) => {
@@ -389,40 +403,42 @@
                 queueMicrotask(() => activateSession(session));
             }
             if (event === 'SIGNED_OUT') {
-                currentUserId = undefined;
-                showAuthPanel('Sesión cerrada. Los datos locales quedan guardados en este dispositivo.');
+                showLocalMode('Sesión cerrada · los datos siguen en este dispositivo');
             }
         });
 
         client.auth.getSession()
             .then(({ data, error }) => {
                 if (error) {
-                    showAuthPanel(`No se pudo comprobar la sesión: ${error.message}`);
+                    console.error('No se pudo comprobar la sesión de COLIPETS:', error);
+                    showLocalMode('Modo local · no se pudo comprobar la sesión');
                     return;
                 }
                 if (data.session) {
                     return activateSession(data.session);
                 }
-                showAuthPanel('Inicia sesión con la cuenta compartida de COLIPETS.');
             })
             .catch(error => {
                 console.error('No se pudo comprobar la sesión de COLIPETS:', error);
-                showAuthPanel(`No se pudo comprobar la sesión: ${error.message}`);
+                showLocalMode('Modo local · no se pudo comprobar la sesión');
             });
     }
 
-    document.getElementById('colipetsCloudControls').hidden = true;
-    document.body.classList.add('cloud-locked');
-
-    if (!config.url || !config.anonKey) {
-        setupAuthentication();
-    } else {
-        loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2')
-            .then(setupAuthentication)
-            .catch(error => {
-                console.error('No se pudo cargar el cliente de Supabase:', error);
-                showAuthPanel(`No se pudo cargar la conexión de Supabase: ${error.message}. Puedes seguir en modo local.`);
-                document.getElementById('colipetsUseOffline').hidden = false;
-            });
-    }
+    loadApplication()
+        .then(() => {
+            if (!config.url || !config.anonKey) {
+                setupAuthentication();
+                return;
+            }
+            return loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2')
+                .then(setupAuthentication)
+                .catch(error => {
+                    console.error('No se pudo cargar el cliente de Supabase:', error);
+                    showLocalMode('Modo local · conexión de sincronización no disponible');
+                });
+        })
+        .catch(error => {
+            console.error('No se pudo iniciar COLIPETS:', error);
+            showAuthPanel(`No se pudo iniciar COLIPETS: ${error.message}`);
+        });
 })();

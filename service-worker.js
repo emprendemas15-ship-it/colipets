@@ -1,4 +1,4 @@
-const CACHE_NAME = 'colipets-shell-v2';
+const CACHE_NAME = 'colipets-shell-v3';
 const APP_SHELL = [
     './',
     './index.html',

@@ -1,6 +1,6 @@
 # COLIPETS
 
-COLIPETS is a static progressive web app. It can be installed from a browser and uses Supabase email/password authentication to sync app data between devices. The Supabase client uses only the public anon key; row-level security keeps each account's data separate.
+COLIPETS is a static progressive web app. It opens directly without requiring an account; data is saved on the current device. Signing in to Supabase is optional and enables syncing app data between devices. The Supabase client uses only the public anon key; row-level security keeps each account's data separate.
 
 Live app: https://emprendemas15-ship-it.github.io/colipets/
 
@@ -21,14 +21,14 @@ The public GitHub repository contains application source, not business spreadshe
    - `SUPABASE_URL`: the Supabase Project URL.
    - `SUPABASE_ANON_KEY`: the public anon/publishable key.
 3. Under **Settings → Pages**, select **GitHub Actions** as the build and deployment source.
-4. The workflow deploys on each push to `main`. After the first successful run, open the Pages URL shown in the deployment and sign in with the shared account.
+4. The workflow deploys on each push to `main`. After the first successful run, open the Pages URL shown in the deployment. The app opens directly; sign in only if you want to sync between devices.
 
 The workflow writes the public client configuration only into the generated Pages artifact. It fails instead of publishing an app without its Supabase connection settings.
 
 ## Data and offline use
 
-On the first sign-in, existing `taller_*` and `colipets_*` app data in that browser is merged into the account. Catalog entries merge by code and movements by ID; cloud values win if the same record differs. Later changes sync through Supabase and realtime updates. Use the same account on each device.
+COLIPETS opens directly in local mode, and its data stays on that device unless you choose **Sincronizar entre dispositivos** and sign in. On the first sign-in, existing `taller_*` and `colipets_*` app data in that browser is merged into the account. Catalog entries merge by code and movements by ID; cloud values win if the same record differs. Later changes sync through Supabase and realtime updates. Use the same account on each device.
 
-If Supabase is unavailable, the sign-in screen can open the local copy. Local-only changes are not uploaded until you sign in again. The PWA caches its app shell for offline access after the first successful visit. Export a COLIPETS backup before changing devices or accounts.
+If Supabase is unavailable, COLIPETS still opens in local mode. Local-only changes are not uploaded until you sign in. The PWA caches its app shell for offline access after the first successful visit. Export a COLIPETS backup before changing devices or accounts.
 
 The Excel workbook, `outputs/`, local Node modules, and spreadsheet-analysis scripts are intentionally excluded from GitHub by [`.gitignore`](./.gitignore).
