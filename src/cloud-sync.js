@@ -163,7 +163,7 @@
         await loadScript('./src/legacy/clean-baseline.js');
         await loadScript('./src/legacy/original-calculator.js');
         if (document.readyState === 'complete' && typeof window.onload === 'function') window.onload();
-        await loadScript('./src/app.js?v=16');
+        await loadScript('./src/app.js?v=17');
         if (document.readyState === 'complete') window.dispatchEvent(new Event('load'));
         appLoaded = true;
         authPanel.hidden = true;
