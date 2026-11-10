@@ -4,7 +4,7 @@
       const read = k => { try { return JSON.parse(localStorage.getItem(k)) ?? null; } catch { return null; } };
       const write = (k,v) => localStorage.setItem(k, JSON.stringify(v));
       const migrationMetaKey='colipets_migration_meta_v1', migrationIssuesKey='colipets_migration_issues_v1', migrationArchiveKey='colipets_pre_xlsm_archive_v1', migrationMarkerKey='colipets_xlsm_migrated_sha256_v1';
-      let migrationMeta=read(migrationMetaKey), migrationIssues=read(migrationIssuesKey)||[];
+      let migrationMeta=read(migrationMetaKey), migrationIssues=(read(migrationIssuesKey)||[]).filter(issue=>issue.type!=='app_catalog_difference');
       const issueFilterState={query:'',status:'pending'};
       let mpSaved=read(keys.mp), ptSaved=read(keys.pt);
       const excelMasterSeed={pt:[],mp:[],nofab:[],clientes:[]};
