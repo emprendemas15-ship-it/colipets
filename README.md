@@ -43,6 +43,12 @@ COLIPETS opens directly in local mode, and its data stays on that device unless 
 
 Use **Conteo físico** from either inventory section to reconcile products and raw materials. Enter only the items counted; blank fields are left unchanged. These stock-only adjustments are excluded from the monthly balance.
 
+## Importar el Excel de forma privada
+
+En **Copia de seguridad**, seleccione el paquete privado `COLIPETS-excel-import.json` para combinar los catálogos, clientes y movimientos históricos con los datos del navegador. La aplicación pública no incluye esos catálogos ni los datos de clientes. La importación es idempotente, crea una copia previa de recuperación, deja las existencias actuales en cero mediante ajustes físicos y reabre los cierres afectados. Los valores faltantes, códigos duplicados y dimensiones por verificar quedan señalados en **Conciliación de datos originales**; no se convierten silenciosamente en costos confiables.
+
+El paquete y el libro de Excel contienen datos comerciales y de clientes: no se incluyen en el repositorio ni en el despliegue público. La app pedirá confirmación antes de importarlos. Si ya hay una sesión de sincronización activa, confirmar también enviará los datos a la cuenta Supabase autorizada; cancele la importación si no desea hacerlo.
+
 ## Validations and linked inventory
 
 - Sales, credits, and consignment deliveries require available finished-product stock for the movement date. Credits reduce stock; consigned units are reserved and leave inventory when paid, or become available again when returned.
@@ -50,6 +56,10 @@ Use **Conteo físico** from either inventory section to reconcile products and r
 - Product and material selectors use the catalogs and fill related details and prices. Purchases require a catalog code for inventory items; an empty code is an operating expense.
 - Movement dates are limited to the first open monthly period. Save that month's balance before registering movements in the following month. Payments, refunds, and consignment settlements cannot predate their original transaction.
 - Required fields, positive quantities, valid totals, stock availability, and original transaction references are checked before a record is accepted.
+
+## Quotes
+
+Open **Cotizaciones** from the navigation menu. Add multiple active catalog products regardless of stock, or estimate a custom bed from a saved fabrication plan. Custom estimates use the selected dimensions and materials plus the catalog's material prices; missing or unreconciled costs are reported instead of silently treated as free. Suggested prices and quantities can be edited before saving. Quotes can be reopened and printed or saved as PDF, and they do not reserve stock, create inventory movements, or affect the monthly balance.
 
 If Supabase is unavailable, COLIPETS still opens in local mode. Local-only changes are not uploaded until you sign in. The PWA caches its app shell for offline access after the first successful visit. Export a COLIPETS backup before changing devices or accounts.
 

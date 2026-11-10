@@ -3,6 +3,7 @@
 *.xlsx
 *.xlsm
 /outputs/
+/COLIPETS-excel-import*.json
 /*.mjs
 /*.ps1
 
