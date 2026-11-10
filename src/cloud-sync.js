@@ -13,7 +13,7 @@
     const backupPrefix = '__colipets_local_backup:';
     // This idempotency marker is intentionally stored as a raw string by the
     // Excel importer, so it must never be parsed or uploaded as app JSON.
-    const reservedStateKeys = new Set([ownerKey, 'colipets_xlsm_migrated_sha256_v1']);
+    const reservedStateKeys = new Set([ownerKey, 'colipets_xlsm_migrated_sha256_v1', 'colipets_migration_issues_v1']);
     const appStateKey = key => !reservedStateKeys.has(key) && (key.startsWith('taller_') || key.startsWith('colipets_'));
     let client;
     let currentUserId;
@@ -163,7 +163,7 @@
         await loadScript('./src/legacy/clean-baseline.js');
         await loadScript('./src/legacy/original-calculator.js');
         if (document.readyState === 'complete' && typeof window.onload === 'function') window.onload();
-        await loadScript('./src/app.js?v=15');
+        await loadScript('./src/app.js?v=16');
         if (document.readyState === 'complete') window.dispatchEvent(new Event('load'));
         appLoaded = true;
         authPanel.hidden = true;

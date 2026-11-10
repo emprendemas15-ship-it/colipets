@@ -1,4 +1,4 @@
-const CACHE_NAME = 'colipets-shell-v15';
+const CACHE_NAME = 'colipets-shell-v16';
 const APP_SHELL = [
     './',
     './index.html',
@@ -6,7 +6,7 @@ const APP_SHELL = [
     './src/app.css',
     './src/legacy/clean-baseline.js',
     './src/legacy/original-calculator.js',
-    './src/app.js?v=15',
+    './src/app.js?v=16',
     './src/cloud-sync.js',
     './src/supabase-config.js',
     './icons/icon-192.png',
