@@ -31,7 +31,7 @@ html, body { overflow-x: hidden; }
             input, select, textarea, button {
                 font-size: 16px !important;
             }
-            table { min-width: 640px; }
+            table { min-width: 0; }
         }
         @media (max-width: 640px) {
             #colipetsBrand { min-height:62px; padding:.6rem .75rem!important; flex-direction:row!important; align-items:center!important; gap:.5rem!important; }
@@ -69,15 +69,23 @@ html, body { overflow-x: hidden; }
             #erpWorkspace form > button { width:100%; min-height:44px; }
             #erpWorkspace label { display:block; min-width:0; }
             #erpWorkspace input, #erpWorkspace select, #erpWorkspace textarea { width:100%; max-width:100%; }
-            #erpWorkspace table { min-width:640px; }
-            #erpWorkspace .overflow-x-auto { max-width:100%; }
+            #erpWorkspace table { min-width:0; }
+            #erpWorkspace .overflow-x-auto { max-width:100%; overflow-x:hidden; }
         }
         @media print{@page{size:A4 landscape;margin:10mm}body.printing-quote{margin:0!important;padding:0!important;background:#fff!important}body.printing-quote>:not(#cotPrintOnly){display:none!important}#cotPrintOnly{display:block!important;position:static!important;width:100%!important;height:auto!important;overflow:visible!important;margin:0!important;padding:0!important;background:#fff!important}#cotPrintOnly,#cotPrintOnly *{visibility:visible!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}#cotPrintOnly #resultadoCotizacion,#cotPrintOnly #cotOut{display:block!important;position:static!important;inset:auto!important;width:100%!important;height:auto!important;overflow:visible!important;margin:0!important;padding:0!important;background:#fff!important;page-break-inside:avoid!important;break-inside:avoid-page!important}#cotPrintOnly .internal-quote,#cotPrintOnly button,#cotPrintOnly form{display:none!important}#cotPrintOnly .erp-section-card,#cotPrintOnly>div:first-child{box-shadow:none!important;border:0!important}#cotPrintOnly table thead{background:#e0e7ff!important;color:#312e81!important}#cotPrintOnly th,#cotPrintOnly td{padding:6px 8px!important}#cotPrintOnly table tr{page-break-inside:avoid!important;break-inside:avoid!important}}
 
-#erpWorkspace table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid #cbd5e1;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 2px 8px #0f172a0a}
+#erpWorkspace table{width:100%;min-width:0;table-layout:fixed;border-collapse:separate;border-spacing:0;border:1px solid #cbd5e1;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 2px 8px #0f172a0a}
 #erpWorkspace thead tr{background:linear-gradient(100deg,#1e3a8a,#4338ca);color:#fff}
-#erpWorkspace thead th{padding:.7rem .55rem;border-bottom:1px solid #c7d2fe;font-size:.68rem;letter-spacing:.035em;white-space:nowrap}
-#erpWorkspace tbody td{padding:.62rem .55rem;border-bottom:1px solid #e2e8f0;vertical-align:top}
+#erpWorkspace thead th{padding:.55rem .35rem;border-bottom:1px solid #c7d2fe;font-size:.68rem;letter-spacing:.02em;white-space:normal;overflow-wrap:anywhere;vertical-align:bottom}
+#erpWorkspace tbody td{padding:.5rem .35rem;border-bottom:1px solid #e2e8f0;vertical-align:top;overflow-wrap:anywhere;word-break:normal}
+#erpWorkspace table button,#erpWorkspace table input,#erpWorkspace table select{max-width:100%;min-width:0}
+@media(max-width:768px){
+    #erpWorkspace table{font-size:10px!important}
+    #erpWorkspace thead th{padding:.4rem .2rem;font-size:9px;line-height:1.2}
+    #erpWorkspace tbody td{padding:.4rem .2rem;font-size:10px;line-height:1.25}
+    #erpWorkspace table .whitespace-nowrap{white-space:normal!important}
+    #erpWorkspace table .font-mono{font-size:9px!important;overflow-wrap:anywhere}
+}
 #erpWorkspace tbody tr:nth-child(even){background:#f8fafc}
 #erpWorkspace tbody tr:hover{background:#eff6ff}
 #erpWorkspace form{border-color:#c7d2fe!important;box-shadow:0 4px 12px #1e3a8a0b}
