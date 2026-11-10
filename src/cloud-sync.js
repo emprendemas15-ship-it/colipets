@@ -51,7 +51,11 @@
         for (let index = 0; index < localStorage.length; index += 1) {
             const key = localStorage.key(index);
             if (key && appStateKey(key)) {
-                state[key] = JSON.parse(localStorage.getItem(key));
+                try {
+                    state[key] = JSON.parse(localStorage.getItem(key));
+                } catch (error) {
+                    console.warn('Se omitió un dato local que no está guardado como JSON:', key);
+                }
             }
         }
         return state;
